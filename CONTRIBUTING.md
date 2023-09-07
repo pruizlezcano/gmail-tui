@@ -15,6 +15,7 @@
 ```
 
 ```{todo} Provide the correct links/replacements at the bottom of the document.
+
 ```
 
 ```{todo} You might want to have a look on [PyScaffold's contributor's guide],
@@ -43,7 +44,7 @@ behavior guidelines.
 
 ## Issue Reports
 
-If you experience bugs or general issues with `gmail-tui`, please have a look
+If you experience bugs or general issues with `gmail_tui`, please have a look
 on the [issue tracker].
 If you don't see anything useful there, please feel free to fire an issue report.
 
@@ -61,10 +62,10 @@ you help us to identify the root cause of the issue.
 
 ## Documentation Improvements
 
-You can help improve `gmail-tui` docs by making them more readable and coherent, or
+You can help improve `gmail_tui` docs by making them more readable and coherent, or
 by adding missing information and correcting mistakes.
 
-`gmail-tui` documentation uses [Sphinx] as its main documentation compiler.
+`gmail_tui` documentation uses [Sphinx] as its main documentation compiler.
 This means that the docs are kept in the same repository as the project code, and
 that any documentation update is done in the same way was a code contribution.
 
@@ -77,7 +78,7 @@ that any documentation update is done in the same way was a code contribution.
 
    :::{tip}
       Please notice that the [GitHub web interface] provides a quick way of
-      propose changes in `gmail-tui`'s files. While this mechanism can
+      propose changes in `gmail_tui`'s files. While this mechanism can
       be tricky for normal code contributions, it works perfectly fine for
       contributing to the docs, and can be quite handy.
 
@@ -134,22 +135,22 @@ source <PATH TO VENV>/bin/activate
 or [Miniconda]:
 
 ```
-conda create -n gmail-tui python=3 six virtualenv pytest pytest-cov
-conda activate gmail-tui
+conda create -n gmail_tui python=3 six virtualenv pytest pytest-cov
+conda activate gmail_tui
 ```
 
 ### Clone the repository
 
 1. Create an user account on GitHub if you do not already have one.
 
-2. Fork the project [repository]: click on the *Fork* button near the top of the
+2. Fork the project [repository]: click on the _Fork_ button near the top of the
    page. This creates a copy of the code under your account on GitHub.
 
 3. Clone this copy to your local disk:
 
    ```
-   git clone git@github.com:YourLogin/gmail-tui.git
-   cd gmail-tui
+   git clone git@github.com:YourLogin/gmail_tui.git
+   cd gmail_tui
    ```
 
 4. You should run:
@@ -161,6 +162,7 @@ conda activate gmail-tui
    to be able to import the package under development in the Python REPL.
 
    ```{todo} if you are not using pre-commit, please remove the following item:
+
    ```
 
 5. Install [pre-commit]:
@@ -198,6 +200,7 @@ conda activate gmail-tui
    to record your changes in [git].
 
    ```{todo} if you are not using pre-commit, please remove the following item:
+
    ```
 
    Please make sure to see the validation messages from [pre-commit] and fix
@@ -330,11 +333,11 @@ on [PyPI], the following steps can be used to release a new version for
 6. Run `tox -e publish -- --repository pypi` and check that everything was
    uploaded to [PyPI] correctly.
 
-[^contrib1]: Even though, these resources focus on open source projects and
+[^contrib1]:
+    Even though, these resources focus on open source projects and
     communities, the general ideas behind collaborating with other developers
     to collectively create software are general and can be applied to all sorts
     of environments, including private companies and proprietary code bases.
-
 
 [black]: https://pypi.org/project/black/
 [commonmark]: https://commonmark.org/
@@ -363,9 +366,9 @@ on [PyPI], the following steps can be used to release a new version for
 [virtual environment]: https://realpython.com/python-virtual-environments-a-primer/
 [virtualenv]: https://virtualenv.pypa.io/en/stable/
 
-
 ```{todo} Please review and change the following definitions:
+
 ```
 
-[repository]: https://github.com/<USERNAME>/gmail-tui
-[issue tracker]: https://github.com/<USERNAME>/gmail-tui/issues
+[repository]: https://github.com/<USERNAME>/gmail_tui
+[issue tracker]: https://github.com/<USERNAME>/gmail_tui/issues
