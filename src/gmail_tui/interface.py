@@ -5,8 +5,8 @@ from textual import events
 from textual.app import App, Binding, ComposeResult
 from textual.containers import VerticalScroll
 from textual.coordinate import Coordinate
-from textual.screen import Screen
-from textual.widgets import DataTable, Footer, Label, Markdown, Static
+from textual.screen import ModalScreen, Screen
+from textual.widgets import DataTable, Footer, Input, Label, Markdown, Static
 
 from gmail_tui.client import Contact, Gmail, Thread
 
@@ -91,12 +91,7 @@ class ThreadScreen(Screen):
                 "Labels: "
                 + " ".join(
                     [
-                        str(
-                            Text(
-                                label.name,
-                                style="white on blue",
-                            )
-                        )
+                        str(Text(label.name))
                         for label in [
                             label
                             for label in self.mail.labels
@@ -120,6 +115,23 @@ class ThreadScreen(Screen):
         self.page.action_scroll_down()
 
 
+class SearchScreen(ModalScreen[str]):
+    BINDINGS = [("escape", "app.pop_screen", "Go Back")]
+
+    def __init__(self, search_query: str = ""):
+        super().__init__(search_query)
+        self.search_query = search_query
+
+    def compose(self) -> ComposeResult:
+        yield Input(
+            placeholder="Search query",
+            value=self.search_query,
+        )
+
+    def key_enter(self) -> None:
+        self.dismiss(self.query_one(Input).value)
+
+
 class LoadingScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Label("Loading...")
@@ -129,6 +141,7 @@ class Main(App):
     BINDINGS = [
         Binding("q", "quit", "Quit"),
         Binding("d", "toggle_dark", "Toggle dark mode"),
+        Binding("/", "show_search", "Search"),
     ]
 
     CSS_PATH = "style.css"
@@ -141,8 +154,11 @@ class Main(App):
         self.push_screen(LoadingScreen())
         self.max_results = 25
         self.next_page_token = ""
+        self.search_query = None
         self.threads, self.next_page_token = gmail.get_threads(
-            max_results=self.max_results, page_token=self.next_page_token
+            max_results=self.max_results,
+            page_token=self.next_page_token,
+            query=self.search_query,
         )
         self.pop_screen()
         self.table = self.query_one(DataTable)
@@ -153,7 +169,6 @@ class Main(App):
         self.table.add_column("Date", key="date", width=None)
         self.table.columns["subject"].auto_width = False
         self.table.action_select_cursor = self.action_select_cursor
-        self.table.action_cursor_down = self.action_cursor_down
         self.add_threads(self.threads)
 
     def add_threads(self, threads: list[Thread]) -> None:
@@ -189,28 +204,40 @@ class Main(App):
         self.table.columns["subject"].width = event.size.width - 37
         self.table.refresh_column(2)
 
-    def action_cursor_down(self):
-        row = self.table.cursor_row
-        if row == 100:
-            new_threads, self.next_page_token = gmail.get_threads(
-                max_results=self.max_results, page_token=self.next_page_token
-            )
-            self.add_threads(new_threads)
-            self.threads += new_threads
-
-        self.table.move_cursor(row=row + 1)
-
     def action_select_cursor(self):
         row = self.table.cursor_row
         if self.table.get_row_at(row)[0] == "+":
-            new_threads, self.next_page_token = gmail.get_threads(
-                max_results=self.max_results, page_token=self.next_page_token
-            )
-            self.table.remove_row("load_more")
-            self.add_threads(new_threads)
-            self.threads += new_threads
+            if self.next_page_token == "":
+                self.table.remove_row("load_more")
+                self.table.add_row("-", "No more results", key="no_more")
+                self.table.move_cursor(row=row)
+            else:
+                new_threads, self.next_page_token = gmail.get_threads(
+                    max_results=self.max_results,
+                    page_token=self.next_page_token,
+                    query=self.search_query,
+                )
+                self.table.remove_row("load_more")
+                self.add_threads(new_threads)
+                self.threads += new_threads
+        elif self.table.get_row_at(row)[0] == "-":
+            pass
         else:
             thread = self.threads[row]
             thread.last_message.mark_as_read()
             self.table.update_cell_at(Coordinate(row=row, column=0), value="")
             self.push_screen(ThreadScreen(thread))
+
+    def action_show_search(self):
+        def on_dismiss(search_query: str):
+            if self.search_query != search_query:
+                self.search_query = search_query
+                self.push_screen(LoadingScreen())
+                self.threads, self.next_page_token = gmail.get_threads(
+                    query=search_query, max_results=self.max_results
+                )
+                self.table.clear()
+                self.add_threads(self.threads)
+                self.pop_screen()
+
+        self.push_screen(SearchScreen(self.search_query), on_dismiss)

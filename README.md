@@ -25,7 +25,7 @@
 
 ## TODO
 
-- [ ] Add search functionality
+- [x] Add search functionality
 - [ ] Get message attachments
 - [ ] Send emails
 - [ ] Reply to emails
