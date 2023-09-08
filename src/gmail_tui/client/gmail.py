@@ -40,7 +40,7 @@ class Gmail:
 
     def get_threads(
         self,
-        labels: Union(list[str], None) = None,
+        labels: Union[list[str], None] = None,
         page_token: str = "",
         query: str = None,
         max_results: int = 10,
@@ -95,7 +95,7 @@ class Gmail:
 
     def get_messages(
         self,
-        labels: Union(list[str], None) = None,
+        labels: Union[list[str], None] = None,
         page_token: str = "",
         query: str = None,
         max_results: int = 10,
